@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm
 from django.contrib import messages
 from .forms import LoginForm
+from bootstrap_calendar.models import CalendarEvent
+from .models import Event
 
 
 def index(request):
@@ -42,12 +45,26 @@ def login_view(request):
                 messages.error(request, 'Invalid email or password.')
     else:
         form = LoginForm()
-    return render(request, 'main/vhod.html', {'form': form})
+    return render(request, 'main/logging.html', {'form': form})
+    
 
 
 def logout_view(request):
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
     return redirect('home')
+
+from django.shortcuts import render
+from bootstrap_calendar.models import CalendarEvent
+from .models import Event
+
+def calendar_view(request):
+    events = []
+    for event in Event.objects.all():
+        events.append(CalendarEvent(
+            event.title, event.start_time, event.end_time, event.id))
+    return render(request, 'index.html', {'events': events})
+
+
 
 

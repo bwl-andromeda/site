@@ -4,16 +4,20 @@
 {{ title }}
 {% endblock %}
 
+{% extends 'main/base.html' %}
+
 {% block content %}
-    <h1>Главная страница</h1>
-    {% if tasks %}
-        {% for el in tasks %}
-            <div class="alert alert-warning mt-2">
-                <h3>{{ el.title }}</h3>
-                <p>{{ el.task }}</p>
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>У нас нет записей!</p>
-    {% endif %}
+  <div id="calendar"></div>
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'bootstrap_calendar/js/calendar.min.js' %}"></script>
+  <script>
+    $('#calendar').calendar({
+      events_source: {% autoescape off %}{{ events|json_script:"events-data" }}{% endautoescape %},
+      tmpl_path: '{% static 'bootstrap_calendar/tmpls/' %}',
+      view: 'month',
+      language: 'ru-RU',
+    });
+  </script>
 {% endblock %}
